@@ -1,0 +1,31 @@
+import React, { useEffect, useState } from 'react';
+
+const Dashboard = () => {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const response = await fetch('http://localhost:5000/api/users');
+      const data = await response.json();
+      setUsers(data);
+    };
+
+    fetchUsers();
+  }, []);
+
+  return (
+    <div>
+      <h1>User Dashboard</h1>
+      {users.map(user => (
+        <div key={user._id}>
+          <h2>{user.name}</h2>
+          <p>Email: {user.email}</p>
+          <p>Balance: ${user.accountBalance}</p>
+          {/* Display user's transactions here if needed */}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default Dashboard;
