@@ -1,21 +1,14 @@
-// models.js
-const mongoose = require('mongoose');
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
+    account_balance DECIMAL(10, 2) DEFAULT 0
+);
 
-const UserSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  accountBalance: Number,
-  transactions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Transaction' }]
-});
-
-const TransactionSchema = new mongoose.Schema({
-  amount: Number,
-  date: Date,
-  type: String, // e.g., 'deposit', 'withdrawal'
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-});
-
-const User = mongoose.model('User', UserSchema);
-const Transaction = mongoose.model('Transaction', TransactionSchema);
-
-module.exports = { User, Transaction };
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    amount DECIMAL(10, 2),
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    type VARCHAR(50),  -- e.g., 'deposit', 'withdrawal'
+    user_id INT REFERENCES users(id) ON DELETE CASCADE
+);
