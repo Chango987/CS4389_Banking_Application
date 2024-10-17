@@ -1,10 +1,12 @@
+//importing the required modules
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 const dotenv = require('dotenv');
 
+//load environment variables from a .env file
 dotenv.config();
-
+//initialize the Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -21,7 +23,7 @@ const pool = new Pool({
 app.use(cors());
 app.use(express.json());
 
-// Endpoint to get all users with their transactions
+//endpoint to get all users with their transactions
 app.get('/api/users', async (req, res) => {
   try {
     const result = await pool.query(`
@@ -36,7 +38,7 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
-// Endpoint to get transactions for a specific user
+//endpoint to get transactions for a specific user
 app.get('/api/users/:userId/transactions', async (req, res) => {
   const userId = req.params.userId;
   try {
@@ -50,7 +52,7 @@ app.get('/api/users/:userId/transactions', async (req, res) => {
   }
 });
 
-// Endpoint to create a new user
+//endpoint to create a new user
 app.post('/api/users', async (req, res) => {
   const { name, email, account_balance } = req.body;
   try {
@@ -64,7 +66,7 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
-// Endpoint to create a new transaction for a specific user
+//endpoint to create a new transaction for a specific user
 app.post('/api/users/:userId/transactions', async (req, res) => {
   const userId = req.params.userId;
   const { amount, type } = req.body;
@@ -75,7 +77,7 @@ app.post('/api/users/:userId/transactions', async (req, res) => {
       [amount, type, userId]
     );
 
-    // Update the user's account balance
+    //update the user's account balance
     const updateQuery = `
       UPDATE users 
       SET account_balance = account_balance ${type === 'deposit' ? '+' : '-'} $1
@@ -90,7 +92,7 @@ app.post('/api/users/:userId/transactions', async (req, res) => {
   }
 });
 
-// Endpoint to delete a user and their transactions
+//endpoint to delete a user and their transactions
 app.delete('/api/users/:userId', async (req, res) => {
   const userId = req.params.userId;
   try {
