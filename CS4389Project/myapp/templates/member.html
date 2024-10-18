@@ -1,0 +1,9 @@
+<h1> Member Information </h1>
+
+{% for item in all %}
+
+    <ul>
+        Name: <strong>{{ item.firstName }} {{ item.lastName }}</strong><br/>
+        Email: {{ item.email }}
+    </ul>
+{% endfor %}
