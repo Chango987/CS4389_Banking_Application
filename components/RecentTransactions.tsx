@@ -16,19 +16,20 @@ const accounts = [
   {
     appwriteItemId: 'account_1',
     bankName: 'Bank of Hardcoded Data',
-    currentBalance: 5000,
+    currentBalance: 2587.88,
   },
   {
     appwriteItemId: 'account_2',
     bankName: 'Savings Bank',
-    currentBalance: 3000,
+    currentBalance: 10250,
   },
 ];
 
 const transactions = [
-  { id: 'tx_1', description: 'Grocery Shopping', amount: -50, date: '2023-10-10' },
-  { id: 'tx_2', description: 'Salary', amount: 2000, date: '2023-10-01' },
-  { id: 'tx_3', description: 'Utilities', amount: -100, date: '2023-09-30' },
+  { id: 'tx_1', description: 'Grocery Shopping', amount: -75.23, date: '2023-10-19T14:30:00' },
+  { id: 'tx_2', description: 'Salary', amount: 1983.74, date: '2023-10-25T06:00:00' },
+  { id: 'tx_3', description: 'Utilities', amount: -135.12, date: '2023-10-15T13:23:00' },
+  { id: 'tx_4', description: 'Rent', amount: -1127.42, date: '2023-10-15T13:23:00' },
 ];
 
 // End of hardcoded data

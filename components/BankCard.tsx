@@ -8,7 +8,7 @@ import Copy from './Copy';
 const hardcodedAccount = {
   appwriteItemId: 'account_123',
   name: 'Bank of Hardcoded Data',
-  currentBalance: 5000,
+  currentBalance: 2587.88,
   mask: '1234',
   sharaebleId: 'share_5678',
 };
