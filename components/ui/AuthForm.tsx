@@ -44,22 +44,40 @@ const AuthForm = ({ type }: { type: string }) => {
 
     try {
         //Sign up with Appwrite & create plaid token
-
-        if(type === 'sign-up'){
+      if(type === 'sign-up'){
             //const newUser = await signUp(data);
-
             //setUser(newUser);
-            
-        }
-
-        if(type === 'sign-in'){
+        let endpoint = '/api/join/';
+      }
+      if(type === 'sign-in'){
             /*const newUser = await SignIn({
                 email: data.email,
                 password:data.password,
             })
-
             if(response) router.push('/') */
-        }
+        let endpoint = '/api/login/';
+      }
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          // 'Content-Type': 
+        body: JSON, stringify(data),
+      });
+
+      if (!response.ok){
+        throw new Error('Form submission failed');
+      }
+
+      const result = await response.json();
+
+      if (type === 'sign-in' && result.success){
+        router.push('/');
+      } else if (type === 'sign-up' && result.success){
+        setUser(result.user);
+        router.push('/'); // to dashboard page once implemented
+      }
+
     } catch (error) {
         console.log(error);
     } finally {
