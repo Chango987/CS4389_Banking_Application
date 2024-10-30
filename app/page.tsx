@@ -1,6 +1,8 @@
 import HeaderBox from '@/components/HeaderBox';
 import RecentTransactions from '@/components/RecentTransactions';
 import RightSidebar from '@/components/RightSidebar';
+import Sidebar from '@/components/Sidebar';
+//import { Sidebar } from 'lucide-react';
 //import TotalBalanceBox from '@/components/TotalBalanceBox';
 
 /* Commented out until connected to database
@@ -61,6 +63,8 @@ const Home = ({ searchParams: { id, page } }) => {
             title="Welcome"
             user={user.firstName}
             subtext="Access and manage your account and transactions efficiently."
+
+            
           />
           {/* Commented out until finished with the components 
           <TotalBalanceBox 
@@ -83,6 +87,10 @@ const Home = ({ searchParams: { id, page } }) => {
         transactions={transactions}
         banks={accountsData.slice(0, 2)}
       />
+
+      
+      
+
     </section>
   );
 };

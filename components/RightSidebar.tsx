@@ -4,6 +4,9 @@ import React from 'react';
 import BankCard from './BankCard';
 import { countTransactionCategories } from '@/lib/utils';
 import Category from './Category';
+import { cn } from '@/lib/utils';
+
+import { sidebarLinks } from '@/constants';
 
 // Hardcoded data 
 const hardcodedUser = {
@@ -31,6 +34,15 @@ const hardcodedBanks = [
   },
 ];
 
+const paymentButton = [
+
+  {
+    imgURL: "/icons/money-send.svg",
+    route: "/payment-transfer",
+    label: "Transfer Funds",
+  }
+
+]
 const hardcodedTransactions = [
   { id: 'tx_1', description: 'Grocery Shopping', amount: -50, date: '2023-10-10', category: 'Groceries' },
   { id: 'tx_2', description: 'Salary', amount: 2000, date: '2023-10-01', category: 'Income' },
@@ -100,13 +112,32 @@ const RightSidebar = () => {
           </div>
         )}
 
+        
+        
         <div className="mt-10 flex flex-1 flex-col gap-6">
           <h2 className="header-2">Top categories</h2>
 
           <div className='space-y-5'>
-            {categories.map((category, index) => (
-              <Category key={category.name} category={category} />
-            ))}
+        
+
+          <Link href='/payment-page' key='Payment Page'>
+
+          <Image 
+            src="/icons/money-send.svg"
+            alt="Payment page button" 
+            width="50" 
+            height = "50"
+            />
+          
+          <h2 className='header-2'>Pay A User</h2>
+
+          </Link>
+                  
+                  
+              
+          
+        
+
           </div>
         </div>
       </section>
