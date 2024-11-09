@@ -129,7 +129,7 @@ const RightSidebar = () => {
             height = "50"
             />
           
-          <h2 className='header-2'>Pay A User</h2>
+          <h2 className='header-2'>Send Money</h2>
 
           </Link>
                   
