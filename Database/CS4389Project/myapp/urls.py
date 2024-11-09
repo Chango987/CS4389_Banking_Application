@@ -2,6 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('members/', views.members, name='member'),
-    path('join/', views.join, name='join')
+    path('login/', views.login, name='login'),
+    path('api/send_payment/', views.send_payment, name='send_payment')
 ]
