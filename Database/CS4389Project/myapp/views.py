@@ -20,25 +20,38 @@ def login(request):
             return JsonResponse({'success': False, 'message': 'Invalid login'}, status=400)
     return JsonResponse({'error': 'POST request required'}, status=405)
 
-@api_view([POST])
-
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def send_payment(request):
     sender_id = request.data.get('sender_id')
     receiver_id = request.data.get("receiver_id")
     amount = request.data.get("amount")
 
     try:
+        amount = float(amount)  # Ensure amount is a float
+        if amount <= 0:
+            return Response({"error": "Amount must be positive"}, status=status.HTTP_400_BAD_REQUEST)
+
         sender = BankInfo.objects.get(sender_id=sender_id)
         receiver = BankInfo.objects.get(sender_id=receiver_id)
-        if sender.balance < float(amount):
+
+        if sender.balance < amount:
             return Response({"error": "Insufficient funds"}, status=status.HTTP_400_BAD_REQUEST)
 
-        sender.balance -= float(amount)
-        receiver.balance += float(amount)
-        sender.save()
-        receiver.save()
+        # Atomic transaction
+        with transaction.atomic():
+            sender.balance -= amount
+            receiver.balance += amount
+            sender.save()
+            receiver.save()
 
-        transaction = Transaction.objects.create(sender=sender, receiver=receiver, amount=amount)
-        return Response({"transaction_id": transaction.transaction_id}, status=status.HTTP_201_CREATED)
+            transaction = Transaction.objects.create(sender=sender, receiver=receiver, amount=amount)
+
+        return Response({"transaction_id": str(transaction.transaction_id)}, status=status.HTTP_201_CREATED)
+
     except BankInfo.DoesNotExist:
         return Response({"error": "Invalid sender or receiver"}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        return Response({"error": "Invalid amount format"}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
