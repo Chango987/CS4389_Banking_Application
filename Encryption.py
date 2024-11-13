@@ -1,7 +1,5 @@
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import serialization, hashes
 
 def generate_rsa_keys():
     private_key = rsa.generate_private_key(
@@ -35,3 +33,15 @@ def encrypt_transaction_id(transaction_id, public_key):
         )
     )
     return encrypted_transaction_id
+
+def decrypt_transaction_id(encrypted_transaction_id, private_key):
+    private_key_object = serialization.load_pem_private_key(private_key.encode(), password=None)
+    decrypted_transaction_id = private_key_object.decrypt(
+        encrypted_transaction_id,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+    return decrypted_transaction_id.decode()
