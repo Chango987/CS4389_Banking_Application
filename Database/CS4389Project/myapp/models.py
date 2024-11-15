@@ -93,3 +93,13 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"Transaction {self.transaction_id}"
+
+@receiver(post_save, sender=Transaction)
+def adjust_balances(sender, instance, **kwargs):
+    if instance.sender.balance >= instance.amount:
+        instance.sender.balance -= instance.amount
+        instance.receiver.balance += instance.amount
+        instance.sender.save()
+        instance.receiver.save()
+    else:
+        raise ValueError("Insufficient funds for the transaction")
