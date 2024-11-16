@@ -1,10 +1,9 @@
 "use client";
 
+import { cn, formUrlQuery } from "@/lib/utils";
 import { useSearchParams, useRouter } from "next/navigation";
 
-import { cn, formUrlQuery } from "@/lib/utils";
-
-export const BankTabItem = ({ account, appwriteItemId }: BankTabItemProps) => {
+export const BankTabItem = ({ account, appwriteItemId }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const isActive = appwriteItemId === account?.appwriteItemId;
@@ -22,12 +21,12 @@ export const BankTabItem = ({ account, appwriteItemId }: BankTabItemProps) => {
     <div
       onClick={handleBankChange}
       className={cn(`banktab-item`, {
-        " border-blue-600": isActive,
+        "border-blue-600": isActive,
       })}
     >
       <p
         className={cn(`text-16 line-clamp-1 flex-1 font-medium text-gray-500`, {
-          " text-blue-600": isActive,
+          "text-blue-600": isActive,
         })}
       >
         {account.name}

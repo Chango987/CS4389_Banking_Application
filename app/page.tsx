@@ -35,7 +35,8 @@ const transactions = [
 ];
 
 /* Main component for displaying the home page */
-const Home = ({ searchParams: { id, page } }) => {
+const Home = ({ searchParams }) => {
+  const { id, page } = searchParams || {};
   const currentPage = Number(page) || 1;
 
   /* Uncomment when we can get dynamic user and account fetching from backend
@@ -71,7 +72,7 @@ const Home = ({ searchParams: { id, page } }) => {
           */}
         </header>
         <RecentTransactions 
-          account ={accountsData}
+          account={accountsData}
           transactions={transactions}
           appwriteItemId={appwriteItemId}
           page={currentPage}

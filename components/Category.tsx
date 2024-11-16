@@ -1,19 +1,20 @@
+"use client";
+
 import Image from "next/image";
 
 import { topCategoryStyles } from "@/constants";
 import { cn } from "@/lib/utils";
 
-//import { Progress } from "./ui/progress"; // Add later
+// import { Progress } from "./ui/progress"; // Add later
 
-const Category = ({ category }: CategoryProps) => {
+const Category = ({ category }) => {
   const {
     bg,
     circleBg,
     text: { main, count },
     progress: { bg: progressBg, indicator },
     icon,
-  } = topCategoryStyles[category.name as keyof typeof topCategoryStyles] ||
-  topCategoryStyles.default;
+  } = topCategoryStyles[category.name] || topCategoryStyles.default;
 
   return (
     <div className={cn("gap-[18px] flex p-4 rounded-xl", bg)}>

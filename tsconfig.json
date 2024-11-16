@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/ui/form.jsx", "components/ui/CustomInput.tsx", "components/ui/button.tsx", "components/ui/AuthForm.tsx", "app/page.tsx", "app/layout.tsx", "app/(root)/page.tsx", "app/(root)/layout.tsx", "app/(auth)/layout.tsx", "app/(auth)/sign-up/page.tsx", "components/TransactionsTable.jsx", "components/Sidebar.jsx", "components/RightSidebar.jsx", "components/RecentTransactions.jsx", "components/Pagination.jsx", "components/HeaderBox.jsx", "components/Copy.jsx", "components/Category.jsx", "components/BankTabItem.jsx", "components/BankInfo.jsx", "components/BankCard.jsx", "components/ui/tabs.jsx", "components/ui/table.jsx", "components/ui/label.jsx", "components/ui/input.jsx"],
   "exclude": ["node_modules"]
 }
