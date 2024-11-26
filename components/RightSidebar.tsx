@@ -1,62 +1,73 @@
+'use client';
+
+import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import BankCard from './BankCard';
-import { countTransactionCategories } from '@/lib/utils';
-
-
-// Hardcoded data 
-const hardcodedUser = {
-  firstName: 'John',
-  lastName: 'Doe',
-  email: 'johndoe@example.com',
-};
-
-const hardcodedBanks = [
-  {
-    $id: 'bank_1',
-    appwriteItemId: 'account_1',
-    name: 'Bank of Hardcoded Data',
-    currentBalance: 5000,
-    mask: '1234',
-    sharaebleId: 'share_5678',
-  },
-  {
-    $id: 'bank_2',
-    appwriteItemId: 'account_2',
-    name: 'Savings Bank',
-    currentBalance: 3000,
-    mask: '5678',
-    sharaebleId: 'share_1234',
-  },
-];
-
-const hardcodedTransactions = [
-  { id: 'tx_1', description: 'Grocery Shopping', amount: -50, date: '2023-10-10', category: 'Groceries' },
-  { id: 'tx_2', description: 'Salary', amount: 2000, date: '2023-10-01', category: 'Income' },
-  { id: 'tx_3', description: 'Utilities', amount: -100, date: '2023-09-30', category: 'Bills' },
-];
-// End of hardcoded data
 
 const RightSidebar = () => {
+  // States to hold dynamic data
+  const [user, setUser] = useState(null);
+  const [banks, setBanks] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    // Fetch data from APIs
+    const fetchUserData = async () => {
+      try {
+        const userResponse = await axios.get('http://localhost:8000/api/user'); // Replace with actual API
+        setUser(userResponse.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    const fetchBanksData = async () => {
+      try {
+        const banksResponse = await axios.get('http://localhost:8000/api/banks'); // Replace with actual API
+        setBanks(banksResponse.data);
+      } catch (error) {
+        console.error('Error fetching banks data:', error);
+      }
+    };
+
+    const fetchTransactionsData = async () => {
+      try {
+        const transactionsResponse = await axios.get('http://localhost:8000/api/transactions'); // Replace with actual API
+        setTransactions(transactionsResponse.data);
+      } catch (error) {
+        console.error('Error fetching transactions data:', error);
+      }
+    };
+
+    // Fetch all data in parallel
+    fetchUserData();
+    fetchBanksData();
+    fetchTransactionsData();
+  }, []);
 
   return (
     <aside className="right-sidebar">
       <section className="flex flex-col pb-8">
         <div className="profile-banner" />
         <div className="profile">
-          <div className="profile-img">
-            <span className="text-5xl font-bold text-blue-500">{hardcodedUser.firstName[0]}</span>
-          </div>
+          {user ? (
+            <>
+              <div className="profile-img">
+                <span className="text-5xl font-bold text-blue-500">{user.firstName[0]}</span>
+              </div>
 
-          <div className="profile-details">
-            <h1 className='profile-name'>
-              {hardcodedUser.firstName} {hardcodedUser.lastName}
-            </h1>
-            <p className="profile-email">
-              {hardcodedUser.email}
-            </p>
-          </div>
+              <div className="profile-details">
+                <h1 className="profile-name">
+                  {user.firstName} {user.lastName}
+                </h1>
+                <p className="profile-email">{user.email}</p>
+              </div>
+            </>
+          ) : (
+            <p>Loading user data...</p>
+          )}
         </div>
       </section>
 
@@ -65,7 +76,7 @@ const RightSidebar = () => {
           <h2 className="header-2">My Banks</h2>
           <Link href="/" className="flex gap-2">
             <Image 
-               src="/icons/plus.svg"
+              src="/icons/plus.svg"
               width={20}
               height={20}
               alt="plus"
@@ -76,36 +87,37 @@ const RightSidebar = () => {
           </Link>
         </div>
 
-        {hardcodedBanks.length > 0 && (
+        {banks.length > 0 ? (
           <div className="relative flex flex-1 flex-col items-center justify-center gap-5">
-            <div className='relative z-10'>
+            <div className="relative z-10">
               <BankCard 
-                key={hardcodedBanks[0].$id}
-                account={hardcodedBanks[0]}
-                userName={`${hardcodedUser.firstName} ${hardcodedUser.lastName}`}
+                key={banks[0].$id}
+                account={banks[0]}
+                userName={`${user?.firstName} ${user?.lastName}`}
                 showBalance={false}
               />
             </div>
-            {hardcodedBanks[1] && (
+            {banks[1] && (
               <div className="absolute right-0 top-8 z-0 w-[90%]">
                 <BankCard 
-                  key={hardcodedBanks[1].$id}
-                  account={hardcodedBanks[1]}
-                  userName={`${hardcodedUser.firstName} ${hardcodedUser.lastName}`}
+                  key={banks[1].$id}
+                  account={banks[1]}
+                  userName={`${user?.firstName} ${user?.lastName}`}
                   showBalance={false}
                 />
               </div>
             )}
           </div>
+        ) : (
+          <p>Loading bank data...</p>
         )}
 
         <div className="mt-10 flex flex-1 flex-col gap-6">
-
+          {/* Future content like transaction summaries */}
         </div>
       </section>
     </aside>
   );
 };
-
 
 export default RightSidebar;
