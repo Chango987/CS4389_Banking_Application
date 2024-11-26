@@ -1,73 +1,49 @@
-'use client';
+'use client';  // Ensure this runs on the client side
 
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState, useEffect } from 'react';
 import BankCard from './BankCard';
 
 const RightSidebar = () => {
-  // States to hold dynamic data
+  // State for dynamic data
   const [user, setUser] = useState(null);
   const [banks, setBanks] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-
+  
   useEffect(() => {
-    // Fetch data from APIs
-    const fetchUserData = async () => {
-      try {
-        const userResponse = await axios.get('http://localhost:8000/api/user'); // Replace with actual API
-        setUser(userResponse.data);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
+    // Fetch user data
+    axios.get('http://localhost:8000/api/user')  // Replace with your actual endpoint
+      .then(res => setUser(res.data))
+      .catch(err => console.error('Error fetching user:', err));
 
-    const fetchBanksData = async () => {
-      try {
-        const banksResponse = await axios.get('http://localhost:8000/api/banks'); // Replace with actual API
-        setBanks(banksResponse.data);
-      } catch (error) {
-        console.error('Error fetching banks data:', error);
-      }
-    };
+    // Fetch bank data
+    axios.get('http://localhost:8000/api/banks')  // Replace with your actual endpoint
+      .then(res => setBanks(res.data))
+      .catch(err => console.error('Error fetching banks:', err));
+  }, []);  // Runs once when component mounts
 
-    const fetchTransactionsData = async () => {
-      try {
-        const transactionsResponse = await axios.get('http://localhost:8000/api/transactions'); // Replace with actual API
-        setTransactions(transactionsResponse.data);
-      } catch (error) {
-        console.error('Error fetching transactions data:', error);
-      }
-    };
-
-    // Fetch all data in parallel
-    fetchUserData();
-    fetchBanksData();
-    fetchTransactionsData();
-  }, []);
+  // Conditional rendering while data is loading
+  if (!user || banks.length === 0) {
+    return <p>Loading...</p>;  // Display a loading message
+  }
 
   return (
     <aside className="right-sidebar">
       <section className="flex flex-col pb-8">
         <div className="profile-banner" />
         <div className="profile">
-          {user ? (
-            <>
-              <div className="profile-img">
-                <span className="text-5xl font-bold text-blue-500">{user.firstName[0]}</span>
-              </div>
-
-              <div className="profile-details">
-                <h1 className="profile-name">
-                  {user.firstName} {user.lastName}
-                </h1>
-                <p className="profile-email">{user.email}</p>
-              </div>
-            </>
-          ) : (
-            <p>Loading user data...</p>
-          )}
+          <div className="profile-img">
+            <span className="text-5xl font-bold text-blue-500">{user.firstName[0]}</span>
+          </div>
+          <div className="profile-details">
+            <h1 className='profile-name'>
+              {user.firstName} {user.lastName}
+            </h1>
+            <p className="profile-email">
+              {user.email}
+            </p>
+          </div>
         </div>
       </section>
 
@@ -76,7 +52,7 @@ const RightSidebar = () => {
           <h2 className="header-2">My Banks</h2>
           <Link href="/" className="flex gap-2">
             <Image 
-              src="/icons/plus.svg"
+               src="/icons/plus.svg"
               width={20}
               height={20}
               alt="plus"
@@ -87,13 +63,13 @@ const RightSidebar = () => {
           </Link>
         </div>
 
-        {banks.length > 0 ? (
+        {banks.length > 0 && (
           <div className="relative flex flex-1 flex-col items-center justify-center gap-5">
-            <div className="relative z-10">
+            <div className='relative z-10'>
               <BankCard 
                 key={banks[0].$id}
                 account={banks[0]}
-                userName={`${user?.firstName} ${user?.lastName}`}
+                userName={`${user.firstName} ${user.lastName}`}
                 showBalance={false}
               />
             </div>
@@ -102,19 +78,13 @@ const RightSidebar = () => {
                 <BankCard 
                   key={banks[1].$id}
                   account={banks[1]}
-                  userName={`${user?.firstName} ${user?.lastName}`}
+                  userName={`${user.firstName} ${user.lastName}`}
                   showBalance={false}
                 />
               </div>
             )}
           </div>
-        ) : (
-          <p>Loading bank data...</p>
         )}
-
-        <div className="mt-10 flex flex-1 flex-col gap-6">
-          {/* Future content like transaction summaries */}
-        </div>
       </section>
     </aside>
   );
