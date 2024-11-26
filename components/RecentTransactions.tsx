@@ -1,73 +1,100 @@
-import Link from 'next/link'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BankTabItem } from './BankTabItem'
-import BankInfo from './BankInfo'
-import TransactionsTable from './TransactionsTable'
-import { Pagination } from './Pagination'
+'use client';
 
-// Hardcoded data
-const user = {
-  firstName: 'John',
-  lastName: 'Doe',
-  id: 'user_123',
-};
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BankTabItem } from './BankTabItem';
+import BankInfo from './BankInfo';
+import TransactionsTable from './TransactionsTable';
+import { Pagination } from './Pagination';
+import axios from 'axios';
 
-const accounts = [
-  {
-    appwriteItemId: 'account_1',
-    bankName: 'Bank of Hardcoded Data',
-    currentBalance: 2587.88,
-  },
-  {
-    appwriteItemId: 'account_2',
-    bankName: 'Savings Bank',
-    currentBalance: 10250,
-  },
-];
-
-const transactions = [
-  { id: 'tx_1', description: 'Grocery Shopping', amount: -75.23, date: '2023-10-19T14:30:00' },
-  { id: 'tx_2', description: 'Salary', amount: 1983.74, date: '2023-10-25T06:00:00' },
-  { id: 'tx_3', description: 'Utilities', amount: -135.12, date: '2023-10-15T13:23:00' },
-  { id: 'tx_4', description: 'Rent', amount: -1127.42, date: '2023-10-15T13:23:00' },
-];
-
-// End of hardcoded data
-
-const RecentTransactions = ({
-  appwriteItemId = accounts[0].appwriteItemId, 
-  page = 1,
-}) => {
+const RecentTransactions = ({ page = 1 }) => {
   const rowsPerPage = 10;
+
+  // States for dynamic data
+  const [user, setUser] = useState(null);
+  const [accounts, setAccounts] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [selectedAccountId, setSelectedAccountId] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch dynamic data
+    const fetchUserData = async () => {
+      try {
+        const userResponse = await axios.get('http://localhost:8000/api/user'); // Replace with actual API
+        setUser(userResponse.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    const fetchAccountsData = async () => {
+      try {
+        const accountsResponse = await axios.get('http://localhost:8000/api/accounts'); // Replace with actual API
+        setAccounts(accountsResponse.data);
+        setSelectedAccountId(accountsResponse.data[0]?.appwriteItemId); // Default to first account
+      } catch (error) {
+        console.error('Error fetching accounts data:', error);
+      }
+    };
+
+    const fetchTransactionsData = async () => {
+      try {
+        const transactionsResponse = await axios.get('http://localhost:8000/api/transactions'); // Replace with actual API
+        setTransactions(transactionsResponse.data);
+      } catch (error) {
+        console.error('Error fetching transactions data:', error);
+      }
+    };
+
+    const fetchAllData = async () => {
+      setLoading(true);
+      await Promise.all([fetchUserData(), fetchAccountsData(), fetchTransactionsData()]);
+      setLoading(false);
+    };
+
+    fetchAllData();
+  }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   const totalPages = Math.ceil(transactions.length / rowsPerPage);
 
   const indexOfLastTransaction = page * rowsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - rowsPerPage;
 
-  const currentTransactions = transactions.slice(
-    indexOfFirstTransaction, indexOfLastTransaction
-  );
+  const currentTransactions = transactions
+    .filter((transaction) => transaction.accountId === selectedAccountId)
+    .slice(indexOfFirstTransaction, indexOfLastTransaction);
 
   return (
     <section className="recent-transactions">
       <header className="flex items-center justify-between">
         <h2 className="recent-transactions-label">Recent transactions</h2>
         <Link
-          href={`/transaction-history/?id=${appwriteItemId}`}
+          href={`/transaction-history/?id=${selectedAccountId}`}
           className="view-all-btn"
         >
           View all
         </Link>
       </header>
 
-      <Tabs defaultValue={appwriteItemId} className="w-full">
+      <Tabs
+        defaultValue={selectedAccountId}
+        className="w-full"
+        onValueChange={(value) => setSelectedAccountId(value)}
+      >
         <TabsList className="recent-transactions-tablist">
           {accounts.map((account) => (
             <TabsTrigger key={account.appwriteItemId} value={account.appwriteItemId}>
               <BankTabItem
                 key={account.appwriteItemId}
                 account={account}
-                appwriteItemId={appwriteItemId}
+                appwriteItemId={selectedAccountId}
               />
             </TabsTrigger>
           ))}
@@ -81,7 +108,7 @@ const RecentTransactions = ({
           >
             <BankInfo 
               account={account}
-              appwriteItemId={appwriteItemId}
+              appwriteItemId={selectedAccountId}
               type="full"
             />
 
@@ -96,7 +123,7 @@ const RecentTransactions = ({
         ))}
       </Tabs>
     </section>
-  )
-}
+  );
+};
 
 export default RecentTransactions;
