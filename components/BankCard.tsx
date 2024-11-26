@@ -3,83 +3,96 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import Copy from './Copy';
+import axios from 'axios';
 
-/* Hardcoded data*/
-const hardcodedAccount = {
-  appwriteItemId: 'account_123',
-  name: 'Bank of Hardcoded Data',
-  currentBalance: 2587.88,
-  mask: '1234',
-  sharaebleId: 'share_5678',
-};
+class BankCard extends React.Component {
+  state = {
+    account: null,
+    userName: null,
+    showBalance: true,  // default to true for showing balance
+  };
 
-const hardcodedUserName = 'John Doe';
-// end of hardcoded data
+  componentDidMount() {
+    // Fetching dynamic data from the backend
+    axios.get('http://localhost:8000/account')  // Replace with the correct endpoint
+      .then(res => {
+        const data = res.data;
+        this.setState({
+          account: data.account,  // Assuming the backend sends an 'account' object
+          userName: data.userName,  // Assuming the backend sends a 'userName' string
+        });
+      })
+      .catch(err => {
+        console.error('Error fetching account data:', err);
+        // Handle error appropriately here
+      });
+  }
 
-/* Commented out until connected to database
-const BankCard = ({ account, userName, showBalance = true }: CreditCardProps) => {
-  console.log(account);
-*/
+  render() {
+    const { account, userName, showBalance } = this.state;
 
-const BankCard = ({ showBalance = true }) => {
-  console.log(hardcodedAccount);
+    if (!account) {
+      // You can display a loading state or message while data is being fetched
+      return <div>Loading...</div>;
+    }
 
-  return (
-    <div className="flex flex-col">
-      <Link href={`/transaction-history/?id=${hardcodedAccount.appwriteItemId}`} className="bank-card">
-        <div className="bank-card_content">
-          <div>
-            <h1 className="text-16 font-semibold text-white">
-              {hardcodedAccount.name}
-            </h1>
-            <p className="font-ibm-plex-serif font-black text-white">
-              {formatAmount(hardcodedAccount.currentBalance)}
-            </p>
+    return (
+      <div className="flex flex-col">
+        <Link href={`/transaction-history/?id=${account.appwriteItemId}`} className="bank-card">
+          <div className="bank-card_content">
+            <div>
+              <h1 className="text-16 font-semibold text-white">
+                {account.name}
+              </h1>
+              <p className="font-ibm-plex-serif font-black text-white">
+                {formatAmount(account.currentBalance)}
+              </p>
+            </div>
+
+            <article className="flex flex-col gap-2">
+              <div className="flex justify-between">
+                <h1 className="text-12 font-semibold text-white">
+                  {userName || 'User Name'}
+                </h1>
+                <h2 className="text-12 font-semibold text-white">
+                  ●● / ●●
+                </h2>
+              </div>
+              <p className="text-14 font-semibold tracking-[1.1px] text-white">
+                ●●●● ●●●● ●●●● <span className="text-16">{account.mask}</span>
+              </p>
+            </article>
           </div>
 
-          <article className="flex flex-col gap-2">
-            <div className="flex justify-between">
-              <h1 className="text-12 font-semibold text-white">
-                {hardcodedUserName}
-              </h1>
-              <h2 className="text-12 font-semibold text-white">
-                ●● / ●●
-              </h2>
-            </div>
-            <p className="text-14 font-semibold tracking-[1.1px] text-white">
-              ●●●● ●●●● ●●●● <span className="text-16">{hardcodedAccount.mask}</span>
-            </p>
-          </article>
-        </div>
+          <div className="bank-card_icon">
+            <Image 
+              src="/icons/Paypass.svg"
+              width={20}
+              height={24}
+              alt="pay"
+            />
+            <Image 
+              src="/icons/mastercard.svg"
+              width={45}
+              height={32}
+              alt="mastercard"
+              className="ml-5"
+            />
+          </div>
 
-        <div className="bank-card_icon">
           <Image 
-            src="/icons/Paypass.svg"
-            width={20}
-            height={24}
-            alt="pay"
+            src="/icons/lines.png"
+            width={316}
+            height={190}
+            alt="lines"
+            className="absolute top-0 left-0"
           />
-          <Image 
-            src="/icons/mastercard.svg"
-            width={45}
-            height={32}
-            alt="mastercard"
-            className="ml-5"
-          />
-        </div>
+        </Link>
 
-        <Image 
-          src="/icons/lines.png"
-          width={316}
-          height={190}
-          alt="lines"
-          className="absolute top-0 left-0"
-        />
-      </Link>
-
-      {showBalance && <Copy title={hardcodedAccount.sharaebleId} />}
-    </div>
-  );
-};
+        {showBalance && <Copy title={account.sharaebleId} />}
+      </div>
+    );
+  }
+}
 
 export default BankCard;
