@@ -1,40 +1,13 @@
-'use client';
+"use client";
 
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { formUrlQuery } from "@/lib/utils";
-import { useState, useEffect } from "react";
-import axios from "axios";
 
-export const Pagination = () => {
+export const Pagination = ({ page, totalPages }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  // States for dynamic page and totalPages
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Parse page number from query params
-    const queryPage = Number(searchParams.get("page")) || 1;
-    setPage(queryPage);
-
-    // Fetch total pages dynamically
-    const fetchPaginationData = async () => {
-      try {
-        const response = await axios.get('http://localhost:8000/api/pagination'); // Replace with actual API
-        setTotalPages(response.data.totalPages);
-      } catch (error) {
-        console.error("Error fetching pagination data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPaginationData();
-  }, [searchParams]);
 
   const handleNavigation = (type) => {
     const pageNumber = type === "prev" ? page - 1 : page + 1;
@@ -45,13 +18,8 @@ export const Pagination = () => {
       value: pageNumber.toString(),
     });
 
-    setPage(pageNumber);
     router.push(newUrl, { scroll: false });
   };
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
 
   return (
     <div className="flex justify-between gap-3">
