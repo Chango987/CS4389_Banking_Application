@@ -1,7 +1,7 @@
 from django import forms
-from .models import member
+from .models import MemberInfo  # Correct model name
 
-class member_form(forms.ModelForm):
+class MemberForm(forms.ModelForm):
     class Meta:
-        model = member
-        fields = ['firstName', 'lastName', 'email', 'password']
+        model = MemberInfo  # Correct model
+        fields = ['first_name', 'last_name', 'email', 'password']  # Correct field names
